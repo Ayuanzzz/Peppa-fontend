@@ -8,6 +8,14 @@ export const constantRoutes = [
         redirect: '/dashboard',
     },
     {
+        path: '/login',
+        component: () => import('@/views/login/index.vue')
+    },
+    {
+        path: '/register',
+        component: () => import('@/views/register/index.vue')
+    },
+    {
         path: '/dashboard',
         component: Layout,
         children: [
@@ -24,22 +32,48 @@ export const constantRoutes = [
 
 export const asyncRoutes = [
     // {
-    //     path: '/assigingProjects',
-    //     name: 'assigingProjects',
+    //     path: '/project',
     //     component: Layout,
+    //     meta: { roles: ['admin'] },
     //     children: [
     //         {
-    //             path: '',
-    //             component: () => import('@/views/assigingProjects/index.vue'),
+    //             path: 'index',
+    //             name: 'project',
+    //             component: () => import('@/views/project/index.vue'),
+    //             meta: { title: '项目管理', roles: ['admin'] }
     //         }
     //     ]
-    // }
+
+    // },
+    // {
+    //     path: '/doing',
+    //     component: Layout,
+    //     meta: { roles: ['user'] },
+    //     children: [
+    //         {
+    //             path: 'index',
+    //             name: 'doing',
+    //             component: () => import('@/views/doing/index.vue'),
+    //             meta: { title: '当前任务' }
+    //         }
+    //     ]
+
+    // },
+    {
+        path: '/project',
+        component: () => import('@/views/project/index.vue'),
+        meta: { title: '项目管理', roles: ['admin'] }
+    },
+    {
+        path: '/doing',
+        component: () => import('@/views/doing/index.vue'),
+        meta: { roles: ['user'] },
+    },
 ]
 const router = createRouter({
     history: createWebHistory(),
     routes: constantRoutes
 })
-console.log(router);
 
 
 export default router

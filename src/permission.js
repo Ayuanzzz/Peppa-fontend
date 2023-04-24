@@ -13,6 +13,9 @@ router.beforeEach((to, from) => {
         accessRoutes.forEach(route => {
             router.addRoute(route)
         });
+        console.log(accessRoutes);
+
         return { path: to.fullPath }
     }
+    // console.log(router.getRoutes());
 })

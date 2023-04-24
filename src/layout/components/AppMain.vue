@@ -1,18 +1,17 @@
 <script setup>
-import router from '@/router'
-import { computed } from 'vue'
-const key = computed(() => {
-    return useRouter().path
-})
-console.log(router.currentRoute._value);
+// import router from '@/router'
+// import { computed } from 'vue'
+// const key = computed(() => {
+//     return useRouter().path
+// })
+// console.log(router.currentRoute._value);
 </script>
 
 <template>
     <div class="app-main">
-        <!-- <Transition name="fade-transform" mode="out-in"> -->
-        <router-view key="/done"></router-view>
-        <!-- </Transition> -->
-        <!-- <div>test</div> -->
+        <router-view v-slot="{ Component, route }">
+            <component :is="Component" :key="route.path"></component>
+        </router-view>
     </div>
 </template>
 

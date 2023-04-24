@@ -6,10 +6,10 @@ import AppMain from './components/AppMain.vue'
 <template>
     <div class="app-container">
         <el-row class="side-row">
-            <el-col :span="3">
+            <el-col :span="4">
                 <sidebar />
             </el-col>
-            <el-col :span="21">
+            <el-col :span="20">
                 <app-main />
             </el-col>
         </el-row>

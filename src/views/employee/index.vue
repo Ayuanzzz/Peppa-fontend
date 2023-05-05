@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { getEmp, updateEmp } from '../../api/employee';
+import { getEmp, updateEmp } from '@/api/employee';
 import { ElMessage } from 'element-plus'
+import UserSub from './component/UserSub.vue'
 
 const tableData = ref([])
 
@@ -25,6 +26,13 @@ const getData = () => {
         console.log(err);
     })
 }
+const showSub = ref(false)
+const userId = ref(0)
+const handleEdit = (index, row) => {
+    userId.value = row.id
+    console.log('p', userId.value);
+    showSub.value = true
+}
 onMounted(() => {
     getData()
 })
@@ -34,11 +42,16 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <el-table :data="tableData" style="width: 500px">
+        <el-dialog v-model="showSub" style="width: 700px">
+            <!-- 添加key刷新组件 -->
+            <UserSub :user-id="userId" :key="userId" />
+        </el-dialog>
+        <el-table :data="tableData" style="width: 700px">
             <el-table-column prop="name" label="Name" width="180" />
             <el-table-column prop="timestamp" label="Time" width="180" />
             <el-table-column label="Operations">
                 <template #default="scope">
+                    <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
                 </template>
             </el-table-column>

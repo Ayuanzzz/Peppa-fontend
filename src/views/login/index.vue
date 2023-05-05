@@ -25,7 +25,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import http from '@/api/http'
+import { login } from '@/api/login'
 import { asyncRoutes } from '@/router';
 import { filterAsyncRoutes } from '@/utils/router';
 
@@ -54,20 +54,20 @@ const validateLogin = (name, password) => {
         name: name,
         password: password
     }
-    http.post('/auth/login', data)
-        .then(res => {
-            console.log(res);
-            if (res.status == 200) {
-                saveUserData(res)
-                accessRoutes([res.role])
-                router.push({ path: '/dashboard' })
-            } else {
-                ElMessage({
-                    message: res.message,
-                    type: 'warning',
-                })
-            }
-        })
+
+    login(data).then(res => {
+        console.log(res);
+        if (res.status == 200) {
+            saveUserData(res)
+            accessRoutes([res.role])
+            router.push({ path: '/dashboard' })
+        } else {
+            ElMessage({
+                message: res.message,
+                type: 'warning',
+            })
+        }
+    })
         .catch(err => {
             console.log(err);
         })

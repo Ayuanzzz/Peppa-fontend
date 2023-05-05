@@ -19,7 +19,7 @@
   
 <script setup>
 import { reactive, ref } from 'vue'
-import http from '@/api/http'
+import { validate, register } from '@/api/login'
 import { useRouter } from 'vue-router'
 
 const registerFormRef = ref()
@@ -27,14 +27,13 @@ const router = useRouter()
 
 const validateName = (rule, value, callback) => {
     let username = { 'name': value }
-    http.post('/auth/register/name', username)
-        .then(res => {
-            if (res.status == 409) {
-                callback(new Error(res.message))
-            } else {
-                callback()
-            }
-        })
+    validate(username).then(res => {
+        if (res.status == 409) {
+            callback(new Error(res.message))
+        } else {
+            callback()
+        }
+    })
         .catch(err => {
             console.log(err);
         })
@@ -82,12 +81,11 @@ const submitForm = (formEl) => {
                 name: registerForm.name,
                 password: registerForm.pass
             }
-            http.post('/auth/register', userData)
-                .then(res => {
-                    if (res.status == 200) {
-                        router.push({ path: '/login' })
-                    }
-                })
+            register(userData).then(res => {
+                if (res.status == 200) {
+                    router.push({ path: '/login' })
+                }
+            })
                 .catch(err => {
                     console.log(err);
                 })

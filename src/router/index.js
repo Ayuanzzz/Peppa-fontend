@@ -5,7 +5,7 @@ import Layout from '@/layout/index.vue'
 export const constantRoutes = [
     {
         path: '/',
-        redirect: '/login',
+        redirect: '/register',
     },
     {
         path: '/login',
@@ -32,15 +32,15 @@ export const constantRoutes = [
 
 export const asyncRoutes = [
     {
-        path: '/doing',
+        path: '/done',
         component: Layout,
         meta: { roles: ['user'] },
         children: [
             {
-                path: '/doing',
-                name: 'dashboard',
-                component: () => import('@/views/doing/index.vue'),
-                meta: { title: '首页', roles: ['user'] }
+                path: '',
+                name: 'done',
+                component: () => import('@/views/done/index.vue'),
+                meta: { title: '已完成', roles: ['user'] }
             }
         ]
     },
@@ -76,23 +76,10 @@ export const asyncRoutes = [
         meta: { roles: ['user'] },
         children: [
             {
-                path: 'index',
+                path: '',
                 name: 'doing',
                 component: () => import('@/views/doing/index.vue'),
                 meta: { title: '当前任务', roles: ['user'], icon: 'IconDocument' }
-            }
-        ]
-    },
-    {
-        path: '/proSub',
-        component: Layout,
-        meta: { roles: ['admin'] },
-        children: [
-            {
-                path: '',
-                name: 'proSub',
-                component: () => import('@/views/proSub/index.vue'),
-                meta: { title: '项目详情', roles: ['admin'], icon: 'IconDocument' }
             }
         ]
     }

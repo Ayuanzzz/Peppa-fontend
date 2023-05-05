@@ -8,8 +8,6 @@ const tableData = ref([])
 
 const handleDelete = (index, row) => {
     deletePro(row.id).then((res) => {
-        console.log(row.id);
-        console.log(res);
         if (res.status == 200) {
             ElMessage({
                 message: '删除已成功',

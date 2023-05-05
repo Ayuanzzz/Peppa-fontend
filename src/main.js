@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 import '@/permission.js'
 
@@ -15,7 +16,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app.use(router)
-    .use(ElementPlus)
+    .use(ElementPlus, {
+        locale: zhCn,
+    })
     .use(pinia)
     .mount('#app')
 

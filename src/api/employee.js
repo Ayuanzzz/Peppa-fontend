@@ -1,9 +1,17 @@
 import request from '@/utils/request'
 
-//获取员工信息
-export function getEmp() {
+//分页获取员工信息
+export function getEmp(page) {
     return request({
-        url: '/users',
+        url: `/users/${page}`,
+        method: 'get'
+    })
+}
+
+//获取所有员工信息
+export function getAllEmp() {
+    return request({
+        url: '/users/all',
         method: 'get'
     })
 }

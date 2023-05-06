@@ -1,9 +1,8 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { getEmp, updateEmp } from '@/api/employee';
 import { ElMessage } from 'element-plus'
-import UserSub from './component/UserSub.vue'
-
+import { useRouter } from 'vue-router';
 const tableData = ref([])
 
 const handleDelete = (index, row) => {
@@ -13,52 +12,58 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData()
+            getData(currentPage.value)
         }
     }).catch(err => {
         console.log(err);
     })
 }
-const getData = () => {
-    getEmp().then(res => {
+
+const count = ref(0)
+const getData = (page) => {
+    getEmp(page).then(res => {
         tableData.value = res.users
+        count.value = parseInt(res.count)
     }).catch(err => {
         console.log(err);
     })
 }
-const showSub = ref(false)
 const userId = ref(0)
+const router = useRouter()
 const handleEdit = (index, row) => {
     userId.value = row.id
-    console.log('p', userId.value);
-    showSub.value = true
+    router.push('/userSub/' + userId.value)
 }
-onMounted(() => {
-    getData()
+
+//分页选择
+const currentPage = ref(1)
+const handleCurrentChange = (val) => {
+    currentPage.value = val
+}
+//监听页数变化
+watchEffect(() => {
+    getData(currentPage.value)
 })
-
-
+onMounted(() => {
+    getData(currentPage.value)
+})
 
 </script>
 <template>
     <div class="container">
-        <el-dialog v-model="showSub" style="width: 700px">
-            <!-- 添加key刷新组件 -->
-            <UserSub :user-id="userId" :key="userId" />
-        </el-dialog>
         <el-table :data="tableData" style="width: 700px">
             <el-table-column prop="name" label="Name" width="180" />
             <el-table-column prop="timestamp" label="Time" width="180" />
             <el-table-column label="Operations">
                 <template #default="scope">
                     <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <div class="pag">
-            <el-pagination layout="prev, pager, next" :total="50" />
-
+            <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" layout="prev, pager, next"
+                :total="count"></el-pagination>
         </div>
     </div>
 </template>

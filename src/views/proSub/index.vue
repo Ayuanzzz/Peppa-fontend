@@ -1,28 +1,36 @@
 <script setup>
-import { onMounted, ref, defineProps } from 'vue';
-import { getProByid, addUp, removeUp } from '@/api/up';
-import { getEmp } from '@/api/employee';
-import { ElMessage, progressProps } from 'element-plus'
-
+import { ref, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
+import { getProByid, addUp, removeUp } from '@/api/up'
+import { getAllEmp } from '@/api/employee';
+const proId = ref(0)
+proId.value = useRoute().params.id
 const tableData = ref([])
-const showForm = ref(false)
-const checkList = ref([])
-const empList = ref([])
-const empListFilter = ref([])
-const props = defineProps(['proId'])
-
-const getData = () => {
-    console.log('sub--', props.proId);
-    getProByid(props.proId).then(res => {
+const count = ref(0)
+const getData = (page) => {
+    getProByid(proId.value, page).then(res => {
         tableData.value = res.data
         getEmpData()
+        count.value = parseInt(res.count)
     }).catch(err => {
         console.log(err);
     })
 }
 
+//分页选择
+const currentPage = ref(1)
+const handleCurrentChange = (val) => {
+    currentPage.value = val
+}
+//监听页数变化
+watchEffect(() => {
+    getData(currentPage.value)
+})
+
+//获取员工列表
+const empList = ref([])
 const getEmpData = () => {
-    getEmp().then(res => {
+    getAllEmp().then(res => {
         empList.value = res.users
         empListFilter.value = filterArr(empList.value, tableData.value)
 
@@ -40,7 +48,9 @@ function filterArr(array1, array2) {
     }
 }
 
-
+const showForm = ref(false)
+const checkList = ref([])
+const empListFilter = ref([])
 
 // 分配项目
 const submit = () => {
@@ -49,10 +59,10 @@ const submit = () => {
         for (const e of tmp) {
             let data = {}
             data.user_id = e
-            data.project_id = props.proId
+            data.project_id = proId.value
             await addUp(data)
         }
-        getData()
+        getData(currentPage.value)
         checkList.value = []
         showForm.value = false
     }
@@ -63,6 +73,7 @@ const cancel = () => {
     showForm.value = false;
 }
 
+//删除人员
 const handleDelete = (index, row) => {
     removeUp(row.user_id, row.project_id).then(res => {
         if (res.status = 200) {
@@ -76,31 +87,27 @@ const handleDelete = (index, row) => {
         console.log(err);
     })
 }
-
-
-onMounted(() => {
-    getData()
-})
-
-
-
 </script>
+
 <template>
     <div class="container">
         <el-button type="primary" @click="showForm = true">添加人员</el-button>
         <el-dialog title="添加人员" v-model="showForm">
             <el-checkbox-group v-model="checkList" v-for="emp in empListFilter" :key="emp.id">
-                <el-checkbox :label=emp.id>{{ emp.name }}</el-checkbox>
+                <el-checkbox :label=emp.id class="checkbox">{{ emp.name }}</el-checkbox>
             </el-checkbox-group>
             <el-button type="primary" @click="submit">提交</el-button>
             <el-button type="primary" @click="cancel">取消</el-button>
-
         </el-dialog>
-        <el-divider />
-        <el-table :data="tableData" style="width: 600px">
+        <el-table :data="tableData" style="width: 750px">
             <el-table-column prop="user_name" label="参与人员" width="180" />
             <el-table-column prop="num" label="图幅数量" width="170" />
-            <el-table-column prop="level" label="完成情况" width="180" />
+            <el-table-column prop="status" label="完成情况" width="180">
+                <template #default="scope">
+                    <el-tag :type="scope.row.status ? 'success' : ''">{{ scope.row.status ? '已完成' : '进行中' }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="timestamp" label="创建时间" width="250" />
             <el-table-column label="操作">
                 <template #default="scope">
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -108,8 +115,8 @@ onMounted(() => {
             </el-table-column>
         </el-table>
         <div class="pag">
-            <el-pagination layout="prev, pager, next" :total="50" />
-
+            <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" layout="prev, pager, next"
+                :total="count"></el-pagination>
         </div>
     </div>
 </template>
@@ -124,8 +131,8 @@ onMounted(() => {
 .pag {
     margin-top: 20px;
 }
-</style>
 
-  
-  
-  
+.checkbox {
+    display: inline-block;
+}
+</style>

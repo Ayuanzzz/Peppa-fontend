@@ -27,7 +27,30 @@ export const constantRoutes = [
             }
         ]
     },
-
+    {
+        path: '/userSub/:id',
+        component: Layout,
+        children: [
+            {
+                path: '',
+                name: 'usersub',
+                component: () => import('@/views/userSub/index.vue'),
+                meta: { title: '员工详情', roles: ['admin'], icon: 'User' }
+            }
+        ]
+    },
+    {
+        path: '/proSub/:id',
+        component: Layout,
+        children: [
+            {
+                path: '',
+                name: 'prosub',
+                component: () => import('@/views/proSub/index.vue'),
+                meta: { title: '项目详情', roles: ['admin'], icon: 'User' }
+            }
+        ]
+    }
 ]
 
 export const asyncRoutes = [
@@ -80,7 +103,7 @@ export const asyncRoutes = [
                 name: 'employee',
                 component: () => import('@/views/employee/index.vue'),
                 meta: { title: '员工管理', roles: ['admin'], icon: 'User' }
-            }
+            },
         ]
     }
 ]

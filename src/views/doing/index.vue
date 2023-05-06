@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { getUserByid, addUpByUser, changeStatus, removeUpById, updateUp } from '@/api/up';
+import { onMounted, ref, watchEffect } from 'vue';
+import { getUserDoing, addUpByUser, changeStatus, removeUpById, updateUp } from '@/api/up';
 import { ElMessage } from 'element-plus'
 import { getUser } from '@/utils/auth'
 
@@ -11,9 +11,9 @@ const form = ref({
     level: 0,
     remark: ''
 });
+const count = ref(0)
 
-const userId = ref(0)
-userId.value = getUser().id
+const userId = getUser().id
 const handleDelete = (index, row) => {
     removeUpById(row.id).then((res) => {
         if (res.status == 200) {
@@ -21,15 +21,17 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData()
+            getData(currentPage.value)
         }
     }).catch(err => {
         console.log(err);
     })
 }
-const getData = () => {
-    getUserByid(userId.value).then(res => {
+const getData = (page) => {
+    getUserDoing(userId, page).then(res => {
+        console.log(res.count);
         tableData.value = res.data
+        count.value = parseInt(res.count)
     }).catch(err => {
         console.log(err);
     })
@@ -38,10 +40,10 @@ const getData = () => {
 const showForm = ref(false);
 const submitForm = () => {
     let data = form.value
-    data.user_id = userId.value
+    data.user_id = userId
     addUpByUser(data).then(res => {
         if (res.status == 200) {
-            getData()
+            getData(currentPage.value)
             ElMessage({
                 message: '添加项目成功',
                 type: 'success',
@@ -63,7 +65,7 @@ const editStatus = (index, row) => {
         data.status = row.status
         changeStatus(row.id, data).then(res => {
             if (res.status == 200) {
-                getData()
+                getData(currentPage.value)
                 ElMessage({
                     message: '项目已完成',
                     type: 'success',
@@ -89,7 +91,7 @@ const submitEdit = () => {
     data.remark = editForm.value.remark
     updateUp(editForm.value.id, data).then(res => {
         if (res.status == 200) {
-            getData()
+            getData(currentPage.value)
             showEditForm.value = false
         }
     }).catch(err => {
@@ -99,8 +101,19 @@ const submitEdit = () => {
 const cancleEdit = () => {
     showEditForm.value = false
 }
+
+//分页选择
+const currentPage = ref(1)
+const handleCurrentChange = (val) => {
+    currentPage.value = val
+}
+//监听页数变化
+watchEffect(() => {
+    getData(currentPage.value)
+})
+
 onMounted(() => {
-    getData()
+    getData(currentPage.value)
 })
 
 
@@ -168,7 +181,8 @@ onMounted(() => {
             </el-table-column>
         </el-table>
         <div class="pag">
-            <el-pagination layout="prev, pager, next" :total="50" />
+            <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" layout="prev, pager, next"
+                :total="count"></el-pagination>
         </div>
     </div>
 </template>

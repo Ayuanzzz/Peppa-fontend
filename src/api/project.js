@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 //获取全部项目信息
-export function getPro() {
+export function getPro(page) {
     return request({
-        url: '/projects',
+        url: `/projects/page/${page}`,
         method: 'get'
     })
 }

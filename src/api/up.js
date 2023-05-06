@@ -1,17 +1,25 @@
 import request from '@/utils/request'
 
 //通过项目id获取
-export function getProByid(id) {
+export function getProByid(id, page) {
     return request({
-        url: '/up/project/' + id,
+        url: `/up/project/${id}/${page}`,
+        method: 'get'
+    })
+}
+
+//通过员工获取项目
+export function getUserByid(id, page) {
+    return request({
+        url: `/up/${id}/${page}`,
         method: 'get'
     })
 }
 
 //通过员工id获取进行中项目
-export function getUserByid(id) {
+export function getUserDoing(id, page) {
     return request({
-        url: '/up/user/' + id,
+        url: `/up/user/${id}/${page}`,
         method: 'get'
     })
 }

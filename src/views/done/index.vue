@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { getUserDone, changeStatus, removeUpById, updateUp } from '@/api/up';
 import { ElMessage } from 'element-plus'
 import { getUser } from '@/utils/auth'
@@ -16,19 +16,16 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData()
+            getData(currentPage.value)
         }
     }).catch(err => {
         console.log(err);
     })
 }
-const getData = () => {
-    currentPage.value = 1
-    console.log(currentPage.value);
-    getUserDone(userId.value, currentPage.value).then(res => {
-        console.log(res);
+const getData = (page) => {
+    getUserDone(userId, page).then(res => {
         tableData.value = res.data
-        count.value = res.count
+        count.value = parseInt(res.count)
     }).catch(err => {
         console.log(err);
     })
@@ -39,10 +36,9 @@ const editStatus = (index, row) => {
     if (row.status === true) {
         let data = {}
         data.status = row.status
-        console.log(data);
         changeStatus(row.id, data).then(res => {
             if (res.status == 200) {
-                getData()
+                getData(currentPage.value)
                 ElMessage({
                     message: '项目进行中',
                     type: 'success',
@@ -69,7 +65,7 @@ const submitEdit = () => {
     updateUp(editForm.value.id, data).then(res => {
         console.log(res);
         if (res.status == 200) {
-            getData()
+            getData(currentPage.value)
             showEditForm.value = false
         }
     }).catch(err => {
@@ -85,6 +81,10 @@ const currentPage = ref(1)
 const handleCurrentChange = (val) => {
     currentPage.value = val
 }
+//监听页数变化
+watchEffect(() => {
+    getData(currentPage.value)
+})
 
 //时间选择
 const filterDate = ref('')
@@ -92,7 +92,7 @@ const handleFilterChange = () => {
     console.log(filterDate);
 }
 onMounted(() => {
-    getData()
+    getData(currentPage.value)
 })
 
 

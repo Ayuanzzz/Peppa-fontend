@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { getPro, addPro, deletePro } from '../../api/project';
+import { onMounted, ref, watchEffect } from 'vue';
+import { getPro, addPro, deletePro } from '@/api/project';
 import { ElMessage } from 'element-plus'
-import ProSub from './component/ProSub.vue'
+import { useRouter } from 'vue-router';
 
 const tableData = ref([])
 
@@ -13,15 +13,19 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData()
+            getData(currentPage.value)
         }
     }).catch(err => {
         console.log(err);
     })
 }
-const getData = () => {
-    getPro().then(res => {
+
+const count = ref(0)
+const getData = (page) => {
+    getPro(page).then(res => {
+        console.log(res);
         tableData.value = res.projects
+        count.value = parseInt(res.count)
     }).catch(err => {
         console.log(err);
     })
@@ -34,10 +38,9 @@ const form = ref({
 });
 
 const submitForm = () => {
-    console.log(form.value);
     addPro(form.value).then(res => {
         if (res.status == 200) {
-            getData()
+            getData(1)
             ElMessage({
                 message: '创建项目成功',
                 type: 'success',
@@ -55,13 +58,25 @@ const cancleForm = () => {
 
 const showSub = ref(false)
 const proId = ref(0)
+const router = useRouter()
 const handleEdit = (index, row) => {
     proId.value = row.id
-    console.log('p', proId.value);
-    showSub.value = true
+    router.push('/proSub/' + proId.value)
 }
+
+//分页选择
+const currentPage = ref(1)
+const handleCurrentChange = (val) => {
+    currentPage.value = val
+}
+
+//监听页数变化
+watchEffect(() => {
+    getData(currentPage.value)
+})
+
 onMounted(() => {
-    getData()
+    getData(currentPage.value)
 })
 
 
@@ -85,10 +100,6 @@ onMounted(() => {
             </el-form>
         </el-dialog>
         <el-divider />
-        <el-dialog v-model="showSub" style="width: 700px">
-            <!-- 添加key刷新组件 -->
-            <ProSub :pro-id="proId" :key="proId" />
-        </el-dialog>
         <el-table :data="tableData" style="width: 500px;height:1200px">
             <el-table-column prop="name" label="Name" width="180" />
             <el-table-column prop="timestamp" label="Time" width="180" />
@@ -100,8 +111,8 @@ onMounted(() => {
             </el-table-column>
         </el-table>
         <div class="pag">
-            <el-pagination layout="prev, pager, next" :total="50" />
-
+            <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" layout="prev, pager, next"
+                :total="count"></el-pagination>
         </div>
     </div>
 </template>

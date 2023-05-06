@@ -5,7 +5,7 @@ import Layout from '@/layout/index.vue'
 export const constantRoutes = [
     {
         path: '/',
-        redirect: '/register',
+        redirect: '/dashboard',
     },
     {
         path: '/login',
@@ -20,8 +20,8 @@ export const constantRoutes = [
         component: Layout,
         children: [
             {
-                path: '/project',
-                name: 'project',
+                path: '',
+                name: 'dashboard',
                 component: () => import('@/views/dashboard/index.vue'),
                 meta: { title: '首页', icon: 'SuitcaseLine' }
             }
@@ -31,6 +31,19 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
+    {
+        path: '/doing',
+        component: Layout,
+        meta: { roles: ['user'] },
+        children: [
+            {
+                path: '',
+                name: 'doing',
+                component: () => import('@/views/doing/index.vue'),
+                meta: { title: '当前任务', roles: ['user'], icon: 'IconDocument' }
+            }
+        ]
+    },
     {
         path: '/done',
         component: Layout,
@@ -50,7 +63,7 @@ export const asyncRoutes = [
         meta: { roles: ['admin'] },
         children: [
             {
-                path: '/project',
+                path: '',
                 name: 'project',
                 component: () => import('@/views/project/index.vue'),
                 meta: { title: '项目管理', roles: ['admin'], icon: 'SuitcaseLine' }
@@ -67,19 +80,6 @@ export const asyncRoutes = [
                 name: 'employee',
                 component: () => import('@/views/employee/index.vue'),
                 meta: { title: '员工管理', roles: ['admin'], icon: 'User' }
-            }
-        ]
-    },
-    {
-        path: '/doing',
-        component: Layout,
-        meta: { roles: ['user'] },
-        children: [
-            {
-                path: '',
-                name: 'doing',
-                component: () => import('@/views/doing/index.vue'),
-                meta: { title: '当前任务', roles: ['user'], icon: 'IconDocument' }
             }
         ]
     }

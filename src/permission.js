@@ -3,19 +3,30 @@ import { getUser } from './utils/auth'
 import { asyncRoutes } from '@/router';
 import { filterAsyncRoutes } from '@/utils/router';
 
-let load = 0
-router.beforeEach((to, from) => {
-    if (!getUser() && to.path !== '/login') {
-        return { path: 'login' }
-    } else if (load === 0 && to.path !== '/login') {
-        load++;
-        const accessRoutes = filterAsyncRoutes(asyncRoutes, getUser().roles)
-        accessRoutes.forEach(route => {
-            router.addRoute(route)
-        });
-        console.log(accessRoutes);
+const whiteList = ['/login', '/register']
 
-        return { path: to.fullPath }
+let load = 0
+router.beforeEach((to, from, next) => {
+    if (getUser()) {
+        if (to.path === '/login') {
+            next({ path: '/' })
+        } else {
+            if (load === 0) {
+                load++;
+                const accessRoutes = filterAsyncRoutes(asyncRoutes, getUser().roles)
+                accessRoutes.forEach(route => {
+                    router.addRoute(route)
+                });
+                next({ ...to, replace: true })
+            } else {
+                next()
+            }
+        }
+    } else {
+        if (whiteList.indexOf(to.path) !== -1) {
+            next()
+        } else {
+            next(`/login?redirect=${to.fullPath}`)
+        }
     }
-    // console.log(router.getRoutes());
 })

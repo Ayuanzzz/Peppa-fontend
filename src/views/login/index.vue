@@ -28,6 +28,7 @@ import { ElMessage } from 'element-plus';
 import { login } from '@/api/login'
 import { asyncRoutes } from '@/router';
 import { filterAsyncRoutes } from '@/utils/router';
+import { userDataStore } from '@/stores/user';
 
 
 const router = useRouter()
@@ -39,7 +40,6 @@ const loginForm = reactive({
 })
 
 const saveUserData = (data) => {
-    console.log(data);
     const userData = {
         id: data.id,
         name: data.name,
@@ -49,6 +49,7 @@ const saveUserData = (data) => {
 }
 
 
+const userInfo = userDataStore()
 const validateLogin = (name, password) => {
     let data = {
         name: name,
@@ -56,11 +57,11 @@ const validateLogin = (name, password) => {
     }
 
     login(data).then(res => {
-        console.log(res);
         if (res.status == 200) {
             saveUserData(res)
+            userInfo.getUserData()
             accessRoutes([res.role])
-            router.push({ path: '/dashboard' })
+            router.push({ path: '/' })
         } else {
             ElMessage({
                 message: res.message,

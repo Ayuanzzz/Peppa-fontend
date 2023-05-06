@@ -10,6 +10,7 @@ import { asyncRoutes } from '@/router';
 import { filterAsyncRoutes } from '@/utils/router';
 import { useRoute } from 'vue-router';
 
+const username = getUser().name
 const accessRoutes = filterAsyncRoutes(asyncRoutes, getUser().roles)
 const logout = () => {
     localStorage.removeItem("userData")
@@ -28,7 +29,7 @@ const activeMenu = computed(() => {
 <template>
     <div class="container">
         <div class="menu">
-            <div class="title">呼呼</div>
+            <div class="title">{{ username }}</div>
             <el-menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff" :default-active="activeMenu"
                 style="border-right: none;" v-for="route in accessRoutes" :key="route.path">
                 <el-menu-item :index="route.path" class="rli">

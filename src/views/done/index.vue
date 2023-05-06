@@ -2,7 +2,9 @@
 import { onMounted, ref, reactive } from 'vue';
 import { getUserDone, changeStatus, removeUpById, updateUp } from '@/api/up';
 import { ElMessage } from 'element-plus'
+import { getUser } from '@/utils/auth'
 
+const userId = getUser().id
 const tableData = ref([])
 const count = ref(0)
 
@@ -23,7 +25,7 @@ const handleDelete = (index, row) => {
 const getData = () => {
     currentPage.value = 1
     console.log(currentPage.value);
-    getUserDone(21, currentPage.value).then(res => {
+    getUserDone(userId.value, currentPage.value).then(res => {
         console.log(res);
         tableData.value = res.data
         count.value = res.count

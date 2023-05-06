@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { getUserByid, addUpByUser, changeStatus, removeUpById, updateUp } from '@/api/up';
 import { ElMessage } from 'element-plus'
+import { getUser } from '@/utils/auth'
 
 const tableData = ref([])
 const form = ref({
@@ -11,8 +12,9 @@ const form = ref({
     remark: ''
 });
 
+const userId = ref(0)
+userId.value = getUser().id
 const handleDelete = (index, row) => {
-    console.log(row.id);
     removeUpById(row.id).then((res) => {
         if (res.status == 200) {
             ElMessage({
@@ -26,10 +28,8 @@ const handleDelete = (index, row) => {
     })
 }
 const getData = () => {
-    getUserByid(21).then(res => {
+    getUserByid(userId.value).then(res => {
         tableData.value = res.data
-        console.log(tableData.value);
-
     }).catch(err => {
         console.log(err);
     })
@@ -38,7 +38,7 @@ const getData = () => {
 const showForm = ref(false);
 const submitForm = () => {
     let data = form.value
-    data.user_id = 21
+    data.user_id = userId.value
     addUpByUser(data).then(res => {
         if (res.status == 200) {
             getData()

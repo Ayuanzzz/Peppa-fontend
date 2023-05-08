@@ -26,6 +26,7 @@ const getData = (page) => {
     getUserDone(userId, page).then(res => {
         tableData.value = res.data
         count.value = parseInt(res.count)
+        console.log(tableData.value);
     }).catch(err => {
         console.log(err);
     })
@@ -89,7 +90,23 @@ watchEffect(() => {
 //时间选择
 const filterDate = ref('')
 const handleFilterChange = () => {
-    console.log(filterDate);
+    tableData.value = fileterArray(filterDate.value, tableData.value)
+}
+
+//根据时间过滤数组
+function fileterArray(arr1, arr2) {
+    const filteredArr = [];
+
+    for (let i = 0; i < arr2.length; i++) {
+        const startDate = new Date(arr1[0]).getTime(); // 将开始日期转换为时间戳
+        const endDate = new Date(arr1[1]).getTime(); // 将结束日期转换为时间戳
+        const objDate = new Date(arr2[i].timestamp).getTime(); // 将对象中的时间戳转换为时间戳
+
+        if (objDate >= startDate && objDate <= endDate) {
+            filteredArr.push(arr2[i]);
+        }
+    }
+    return filteredArr;
 }
 onMounted(() => {
     getData(currentPage.value)
@@ -100,8 +117,9 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <el-date-picker v-model="filterDate" type="monthrange" range-separator="To" placeholder="选择月份"
-            start-placeholder="开始月份" end-placeholder="结束月份" @change="handleFilterChange"></el-date-picker>
+        <el-date-picker v-model="filterDate" type="daterange" range-separator="To" placeholder="选择日期"
+            start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
+            value-format="YYYY-MM-DD"></el-date-picker>
         <el-dialog title="编辑项目" v-model="showEditForm">
             <el-form :model="editForm">
                 <el-form-item label="数量">

@@ -17,7 +17,7 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData()
+            getData(currentPage.value)
         }
     }).catch(err => {
         console.log(err);
@@ -28,7 +28,6 @@ const getData = (page) => {
         resData.value = res.data
         count.value = resData.value.length
         tableData.value = filterArr(resData.value, page)
-        console.log(tableData.value);
     }).catch(err => {
         console.log(err);
     })
@@ -41,7 +40,7 @@ const editStatus = (index, row) => {
         data.status = row.status
         changeStatus(row.id, data).then(res => {
             if (res.status == 200) {
-                getData()
+                getData(currentPage.value)
                 ElMessage({
                     message: '项目进行中',
                     type: 'success',
@@ -68,7 +67,7 @@ const submitEdit = () => {
     updateUp(editForm.value.id, data).then(res => {
         console.log(res);
         if (res.status == 200) {
-            getData()
+            getData(currentPage.value)
             showEditForm.value = false
         }
     }).catch(err => {
@@ -86,16 +85,15 @@ const handleCurrentChange = (val) => {
     console.log(currentPage.value);
 }
 //监听页数变化
-watchEffect((currentPage) => {
+watchEffect(() => {
+    console.log(currentPage.value);
     getData(currentPage.value)
 })
 
 //时间选择
 const filterDate = ref('')
 const handleFilterChange = () => {
-    let newArr = fileterArray(filterDate.value, resData.value)
-    resData.value = newArr
-    count.value
+    resData.value = fileterArray(filterDate.value, resData.value)
 }
 
 //根据页码过滤数组
@@ -105,9 +103,6 @@ function filterArr(arr, i) {
     result = arr.slice(num, num + 10)
     return result
 }
-onMounted(() => {
-    getData()
-})
 
 
 

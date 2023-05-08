@@ -85,7 +85,7 @@ onMounted(() => {
 <template>
     <div class="container">
         <el-button type="primary" @click="showForm = true">创建项目</el-button>
-        <el-dialog title="创建项目" v-model="showForm">
+        <el-dialog title="创建项目" v-model="showForm" style="height: 230px;">
             <el-form :model="form">
                 <el-form-item label="项目名称">
                     <el-input v-model="form.name"></el-input>
@@ -93,17 +93,17 @@ onMounted(() => {
                 <el-form-item label="项目数量">
                     <el-input v-model.number="form.num"></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item style="float:right">
                     <el-button type="primary" @click="submitForm">提交</el-button>
                     <el-button type="primary" @click="cancleForm">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <el-divider />
-        <el-table :data="tableData" style="width: 500px;height:1200px">
-            <el-table-column prop="name" label="Name" width="180" />
-            <el-table-column prop="timestamp" label="Time" width="180" />
-            <el-table-column label="Operations">
+        <el-divider style="border-color:#c8c9cc" />
+        <el-table :data="tableData" style="width: 500px">
+            <el-table-column prop="name" label="项目名称" width="180" />
+            <el-table-column prop="timestamp" label="创建时间" width="180" />
+            <el-table-column label="编辑">
                 <template #default="scope">
                     <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>

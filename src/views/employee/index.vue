@@ -51,10 +51,10 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <el-table :data="tableData" style="width: 700px">
-            <el-table-column prop="name" label="Name" width="180" />
-            <el-table-column prop="timestamp" label="Time" width="180" />
-            <el-table-column label="Operations">
+        <el-table :data="tableData" style="width: 600px">
+            <el-table-column prop="name" label="姓名" width="180" />
+            <el-table-column prop="timestamp" label="加入时间" width="180" />
+            <el-table-column label="编辑">
                 <template #default="scope">
                     <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>

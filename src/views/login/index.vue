@@ -74,8 +74,8 @@ const handleLogin = () => {
                 <el-form-item prop="password">
                     <el-input type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
                 </el-form-item>
+                <el-button type="primary" native-type="submit" style="width: 100px">登录</el-button>
             </el-form>
-            <el-button type="primary" native-type="submit" style="width: 100px">登录</el-button>
             <el-divider style="border-color:#c8c9cc" />
             <router-link to="/register" class="footer">账户注册</router-link>
         </div>

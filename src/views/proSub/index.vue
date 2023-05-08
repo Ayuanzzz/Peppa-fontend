@@ -92,6 +92,7 @@ const handleDelete = (index, row) => {
 <template>
     <div class="container">
         <el-button type="primary" @click="showForm = true">添加人员</el-button>
+        <el-divider style="border-color:#c8c9cc" />
         <el-dialog title="添加人员" v-model="showForm">
             <el-checkbox-group v-model="checkList" v-for="emp in empListFilter" :key="emp.id">
                 <el-checkbox :label=emp.id class="checkbox">{{ emp.name }}</el-checkbox>

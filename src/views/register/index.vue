@@ -98,9 +98,9 @@ const resetForm = (formEl) => {
                 <el-form-item prop="checkPass">
                     <el-input v-model="registerForm.checkPass" type="password" autocomplete="off" placeholder="确认密码" />
                 </el-form-item>
+                <el-button type="primary" @click="submitForm(registerFormRef)" style="width: 100px">注册</el-button>
+                <el-button type="primary" @click="resetForm(registerFormRef)" style="width: 100px">重置</el-button>
             </el-form>
-            <el-button type="primary" @click="submitForm(registerFormRef)" style="width: 100px">注册</el-button>
-            <el-button type="primary" @click="resetForm(registerFormRef)" style="width: 100px">重置</el-button>
             <el-divider style="border-color:#c8c9cc" />
             <router-link to="/login" class="footer">账户登录</router-link>
         </div>

@@ -18,7 +18,7 @@ import AppMain from './components/AppMain.vue'
 
 <style lang="scss" scoped>
 .app-container {
-    height: 100vh;
+    height: 100%;
 }
 </style>
 

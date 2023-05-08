@@ -79,9 +79,13 @@ onMounted(() => {
 
 <template>
     <div class="container">
-        <el-date-picker v-model="filterDate" type="daterange" range-separator="To" placeholder="选择日期"
-            start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
-            value-format="YYYY-MM-DD"></el-date-picker>
+        <div class="datepicker">
+            <span>按时间选择：</span>
+            <el-date-picker v-model="filterDate" type="daterange" range-separator="To" placeholder="选择日期"
+                start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
+                value-format="YYYY-MM-DD"></el-date-picker>
+        </div>
+        <el-divider style="border-color:#c8c9cc" />
         <el-table :data="tableData" style="width: 750px">
             <el-table-column prop="project_name" label="参与项目" width="180" />
             <el-table-column prop="num" label="图幅数量" width="170" />
@@ -108,5 +112,17 @@ onMounted(() => {
 
 .pag {
     margin-top: 20px;
+}
+
+.datepicker {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+
+    span {
+        color: #909399;
+        font-family: "Microsoft YaHei";
+        font-size: 14px;
+    }
 }
 </style>

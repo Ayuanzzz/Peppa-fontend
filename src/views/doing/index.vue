@@ -173,7 +173,7 @@ onMounted(() => {
             </el-table-column>
             <el-table-column prop="timestamp" label="创建时间" width="180" />
             <el-table-column prop="remark" label="备注" width="200" />
-            <el-table-column label="Operations" width="180">
+            <el-table-column label="编辑" width="180">
                 <template #default="scope">
                     <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>

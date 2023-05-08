@@ -8,39 +8,47 @@ const userId = getUser().id
 const resData = ref([])
 const count = ref(0)
 const tableData = ref([])
+const backupData = ref([])
 
+//删除表格数据
 const handleDelete = (index, row) => {
-    console.log(row.id);
     removeUpById(row.id).then((res) => {
         if (res.status == 200) {
             ElMessage({
                 message: '删除已成功',
                 type: 'success',
             })
-            getData(currentPage.value)
+            getData()
         }
     }).catch(err => {
         console.log(err);
     })
 }
-const getData = (page) => {
+
+//计算表格数据
+const computedTbale = (page) => {
+    count.value = resData.value.length
+    tableData.value = filterPage(resData.value, page)
+}
+const getData = () => {
     getUserDone(userId).then(res => {
+        backupData.value = res.data
         resData.value = res.data
-        count.value = resData.value.length
-        tableData.value = filterArr(resData.value, page)
+        currentPage.value = 1
+        computedTbale(currentPage.value)
     }).catch(err => {
         console.log(err);
     })
 }
 
-
+//编辑状态
 const editStatus = (index, row) => {
     if (row.status === true) {
         let data = {}
         data.status = row.status
         changeStatus(row.id, data).then(res => {
             if (res.status == 200) {
-                getData(currentPage.value)
+                getData()
                 ElMessage({
                     message: '项目进行中',
                     type: 'success',
@@ -59,15 +67,15 @@ const handleEdit = (index, row) => {
     showEditForm.value = true;
 }
 
+//编辑按钮
 const submitEdit = () => {
     let data = {}
     data.level = editForm.value.level
     data.num = editForm.value.num
     data.remark = editForm.value.remark
     updateUp(editForm.value.id, data).then(res => {
-        console.log(res);
         if (res.status == 200) {
-            getData(currentPage.value)
+            getData()
             showEditForm.value = false
         }
     }).catch(err => {
@@ -87,23 +95,47 @@ const handleCurrentChange = (val) => {
 //监听页数变化
 watchEffect(() => {
     console.log(currentPage.value);
-    getData(currentPage.value)
+    computedTbale(currentPage.value)
 })
 
 //时间选择
 const filterDate = ref('')
 const handleFilterChange = () => {
-    resData.value = fileterArray(filterDate.value, resData.value)
+    console.log(filterDate.value);
+    if (filterDate.value === null) {
+        filterDate.value = ["2000-01-01", "3000-01-01"]
+    }
+    resData.value = filterTime(filterDate.value, backupData.value)
+    computedTbale()
 }
 
 //根据页码过滤数组
-function filterArr(arr, i) {
+function filterPage(arr, i) {
     let result = [];
     let num = (i - 1) * 10
     result = arr.slice(num, num + 10)
     return result
 }
 
+//根据时间过滤数组
+function filterTime(arr1, arr2) {
+    const filteredArr = [];
+
+    for (let i = 0; i < arr2.length; i++) {
+        const startDate = new Date(arr1[0]).getTime(); // 将开始日期转换为时间戳
+        const endDate = new Date(arr1[1]).getTime(); // 将结束日期转换为时间戳
+        const objDate = new Date(arr2[i].timestamp).getTime(); // 将对象中的时间戳转换为时间戳
+
+        if (objDate >= startDate && objDate <= endDate) {
+            filteredArr.push(arr2[i]);
+        }
+    }
+    return filteredArr;
+}
+
+onMounted(() => {
+    getData()
+})
 
 
 </script>

@@ -9,9 +9,9 @@ export function getProByid(id, page) {
 }
 
 //通过员工获取项目
-export function getUserByid(id, page) {
+export function getUserByid(id) {
     return request({
-        url: `/up/${id}/${page}`,
+        url: `/up/${id}`,
         method: 'get'
     })
 }

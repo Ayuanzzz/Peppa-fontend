@@ -25,9 +25,9 @@ export function getUserDoing(id, page) {
 }
 
 //通过员工id获取已完成项目 
-export function getUserDone(id, page) {
+export function getUserDone(id) {
     return request({
-        url: `/up/userDone/${id}/${page}`,
+        url: `/up/userDone/${id}`,
         method: 'get'
     })
 }

@@ -5,8 +5,9 @@ import { ElMessage } from 'element-plus'
 import { getUser } from '@/utils/auth'
 
 const userId = getUser().id
-const tableData = ref([])
+const resData = ref([])
 const count = ref(0)
+const tableData = ref([])
 
 const handleDelete = (index, row) => {
     console.log(row.id);
@@ -16,16 +17,17 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData(currentPage.value)
+            getData()
         }
     }).catch(err => {
         console.log(err);
     })
 }
 const getData = (page) => {
-    getUserDone(userId, page).then(res => {
-        tableData.value = res.data
-        count.value = parseInt(res.count)
+    getUserDone(userId).then(res => {
+        resData.value = res.data
+        count.value = resData.value.length
+        tableData.value = filterArr(resData.value, page)
         console.log(tableData.value);
     }).catch(err => {
         console.log(err);
@@ -39,7 +41,7 @@ const editStatus = (index, row) => {
         data.status = row.status
         changeStatus(row.id, data).then(res => {
             if (res.status == 200) {
-                getData(currentPage.value)
+                getData()
                 ElMessage({
                     message: '项目进行中',
                     type: 'success',
@@ -66,7 +68,7 @@ const submitEdit = () => {
     updateUp(editForm.value.id, data).then(res => {
         console.log(res);
         if (res.status == 200) {
-            getData(currentPage.value)
+            getData()
             showEditForm.value = false
         }
     }).catch(err => {
@@ -81,35 +83,30 @@ const cancleEdit = () => {
 const currentPage = ref(1)
 const handleCurrentChange = (val) => {
     currentPage.value = val
+    console.log(currentPage.value);
 }
 //监听页数变化
-watchEffect(() => {
+watchEffect((currentPage) => {
     getData(currentPage.value)
 })
 
 //时间选择
 const filterDate = ref('')
 const handleFilterChange = () => {
-    tableData.value = fileterArray(filterDate.value, tableData.value)
+    let newArr = fileterArray(filterDate.value, resData.value)
+    resData.value = newArr
+    count.value
 }
 
-//根据时间过滤数组
-function fileterArray(arr1, arr2) {
-    const filteredArr = [];
-
-    for (let i = 0; i < arr2.length; i++) {
-        const startDate = new Date(arr1[0]).getTime(); // 将开始日期转换为时间戳
-        const endDate = new Date(arr1[1]).getTime(); // 将结束日期转换为时间戳
-        const objDate = new Date(arr2[i].timestamp).getTime(); // 将对象中的时间戳转换为时间戳
-
-        if (objDate >= startDate && objDate <= endDate) {
-            filteredArr.push(arr2[i]);
-        }
-    }
-    return filteredArr;
+//根据页码过滤数组
+function filterArr(arr, i) {
+    let result = [];
+    let num = (i - 1) * 10
+    result = arr.slice(num, num + 10)
+    return result
 }
 onMounted(() => {
-    getData(currentPage.value)
+    getData()
 })
 
 

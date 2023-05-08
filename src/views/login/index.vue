@@ -1,26 +1,3 @@
-<template>
-    <div>
-        <el-tabs v-model="activeTab">
-            <el-tab-pane label="用户登录" name="login">
-                <el-form label-width="80px" @submit.native.prevent="handleLogin">
-                    <el-form-item label="用户名" prop="username">
-                        <el-input v-model.trim="loginForm.username" placeholder="请输入用户名"></el-input>
-                    </el-form-item>
-                    <el-form-item label="密码" prop="password">
-                        <el-input type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" native-type="submit">登录</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="用户注册" name="register">
-                <h1>register</h1>
-            </el-tab-pane>
-        </el-tabs>
-    </div>
-</template>
-  
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router';
@@ -33,10 +10,9 @@ import { userDataStore } from '@/stores/user';
 
 const router = useRouter()
 
-const activeTab = ref('login')
 const loginForm = reactive({
-    username: 'admin',
-    password: '666'
+    username: '',
+    password: ''
 })
 
 const saveUserData = (data) => {
@@ -86,4 +62,53 @@ const handleLogin = () => {
     validateLogin(loginForm.username, loginForm.password)
 }
 </script>
+
+<template>
+    <div class="container">
+        <div class="wrapper">
+            <p class="title">项目管理系统</p>
+            <el-form @submit.native.prevent="handleLogin">
+                <el-form-item prop="username">
+                    <el-input v-model.trim="loginForm.username" placeholder="请输入用户名" style="width: 300px"></el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-button type="primary" native-type="submit" style="width: 100px">登录</el-button>
+            <el-divider style="border-color:#c8c9cc" />
+            <router-link to="/register" class="footer">账户注册</router-link>
+        </div>
+    </div>
+</template>
+
+<style lang="scss" scoped>
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #E1F5FE, #B3E5FC);
+}
+
+.wrapper {
+    text-align: center;
+
+    .title {
+        font-family: sans-serif;
+        font-size: 30px;
+        padding-bottom: 25px;
+        color: #336699
+    }
+
+    .footer {
+        color: #4DACF2;
+        font-size: 5px;
+    }
+}
+</style>
+
+  
+
   

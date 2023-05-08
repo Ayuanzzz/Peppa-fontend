@@ -1,22 +1,3 @@
-<template>
-    <el-form ref="registerFormRef" :model="registerForm" status-icon :rules="rules" label-width="120px">
-        <el-form-item label="用户名" prop="name">
-            <el-input v-model.trim="registerForm.name" />
-        </el-form-item>
-        <el-form-item label="密码" prop="pass">
-            <el-input v-model="registerForm.pass" type="password" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
-            <el-input v-model="registerForm.checkPass" type="password" autocomplete="off" />
-        </el-form-item>
-
-        <el-form-item>
-            <el-button type="primary" @click="submitForm(registerFormRef)">注册</el-button>
-            <el-button @click="resetForm(registerFormRef)">重置</el-button>
-        </el-form-item>
-    </el-form>
-</template>
-  
 <script setup>
 import { reactive, ref } from 'vue'
 import { validate, register } from '@/api/login'
@@ -102,4 +83,56 @@ const resetForm = (formEl) => {
     formEl.resetFields()
 }
 </script>
+
+<template>
+    <div class="container">
+        <div class="wrapper">
+            <p class="title">项目管理系统</p>
+            <el-form ref="registerFormRef" :model="registerForm" status-icon :rules="rules">
+                <el-form-item prop="name">
+                    <el-input v-model.trim="registerForm.name" placeholder="请输入用户名" style="width: 300px" />
+                </el-form-item>
+                <el-form-item prop="pass">
+                    <el-input v-model="registerForm.pass" type="password" autocomplete="off" placeholder="请输入密码" />
+                </el-form-item>
+                <el-form-item prop="checkPass">
+                    <el-input v-model="registerForm.checkPass" type="password" autocomplete="off" placeholder="确认密码" />
+                </el-form-item>
+            </el-form>
+            <el-button type="primary" @click="submitForm(registerFormRef)" style="width: 100px">注册</el-button>
+            <el-button type="primary" @click="resetForm(registerFormRef)" style="width: 100px">重置</el-button>
+            <el-divider style="border-color:#c8c9cc" />
+            <router-link to="/login" class="footer">账户登录</router-link>
+        </div>
+    </div>
+</template>
+  
+
+
+<style lang="scss" scoped>
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #E1F5FE, #B3E5FC);
+}
+
+.wrapper {
+    text-align: center;
+
+    .title {
+        font-family: sans-serif;
+        font-size: 30px;
+        padding-bottom: 25px;
+        color: #336699
+    }
+
+    .footer {
+        color: #4DACF2;
+        font-size: 5px;
+    }
+}
+</style>
   

@@ -90,7 +90,6 @@ const cancleEdit = () => {
 const currentPage = ref(1)
 const handleCurrentChange = (val) => {
     currentPage.value = val
-    console.log(currentPage.value);
 }
 //监听页数变化
 watchEffect(() => {

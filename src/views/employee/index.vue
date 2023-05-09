@@ -1,22 +1,33 @@
 <script setup>
 import { onMounted, ref, watchEffect } from 'vue';
 import { getEmp, updateEmp } from '@/api/employee';
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router';
 const tableData = ref([])
 
 const handleDelete = (index, row) => {
-    updateEmp(row.id).then((res) => {
-        if (res.status == 200) {
-            ElMessage({
-                message: '删除已成功',
-                type: 'success',
-            })
-            getData(currentPage.value)
+    ElMessageBox.confirm(
+        '是否删除此员工',
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
         }
-    }).catch(err => {
-        console.log(err);
-    })
+    ).then(() => {
+        updateEmp(row.id).then((res) => {
+            if (res.status == 200) {
+                ElMessage({
+                    message: '删除已成功',
+                    type: 'success',
+                })
+                getData(currentPage.value)
+            }
+        }).catch(err => {
+            console.log(err);
+        })
+    }).catch((err) => { console.log(err); })
+
+
 }
 
 const count = ref(0)

@@ -7,7 +7,6 @@ const whiteList = ['/login', '/register']
 
 let load = 0
 router.beforeEach((to, from, next) => {
-    console.log('router table----', router.getRoutes());
     if (getUser()) {
         if (to.path === '/login') {
             next({ path: '/' })
@@ -29,5 +28,12 @@ router.beforeEach((to, from, next) => {
         } else {
             next(`/login?redirect=${to.fullPath}`)
         }
+    }
+})
+
+//hack to add routes
+router.beforeEach((to, from) => {
+    if (to.path === '/login') {
+        load = 0
     }
 })

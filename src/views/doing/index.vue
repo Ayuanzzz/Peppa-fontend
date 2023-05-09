@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, ref, watchEffect } from 'vue';
 import { getUserDoing, addUpByUser, changeStatus, removeUpById, updateUp } from '@/api/up';
-import { ElMessage } from 'element-plus'
+import { getCreator } from '@/api/project';
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUser } from '@/utils/auth'
 
 const tableData = ref([])
@@ -15,21 +16,40 @@ const count = ref(0)
 
 const userId = getUser().id
 const handleDelete = (index, row) => {
-    removeUpById(row.id).then((res) => {
-        if (res.status == 200) {
-            ElMessage({
-                message: '删除已成功',
-                type: 'success',
-            })
-            getData(currentPage.value)
+    getCreator(row.project_id).then((res => {
+        if (res.project.creator === userId) {
+            ElMessageBox.confirm(
+                '是否删除此项目',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            )
+                .then(() => {
+                    removeUpById(row.id).then((res) => {
+                        if (res.status == 200) {
+                            ElMessage({
+                                message: '删除已成功',
+                                type: 'success',
+                            })
+                            getData(currentPage.value)
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        } else {
+            ElMessage.error('不是此项目创建者，无权删除')
         }
-    }).catch(err => {
-        console.log(err);
-    })
+    }))
 }
+
 const getData = (page) => {
     getUserDoing(userId, page).then(res => {
-        console.log(res.count);
         tableData.value = res.data
         count.value = parseInt(res.count)
     }).catch(err => {

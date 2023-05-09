@@ -7,6 +7,7 @@ export const constantRoutes = [
         path: '/',
         redirect: '/dashboard',
     },
+
     {
         path: '/login',
         component: () => import('@/views/login/index.vue')
@@ -35,7 +36,6 @@ export const constantRoutes = [
                 path: '',
                 name: 'usersub',
                 component: () => import('@/views/userSub/index.vue'),
-                meta: { title: '员工详情', roles: ['admin'], icon: 'User' }
             }
         ]
     },
@@ -47,10 +47,13 @@ export const constantRoutes = [
                 path: '',
                 name: 'prosub',
                 component: () => import('@/views/proSub/index.vue'),
-                meta: { title: '项目详情', roles: ['admin'], icon: 'User' }
             }
         ]
-    }
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        component: () => import('@/views/error/404.vue'),
+    },
 ]
 
 export const asyncRoutes = [
@@ -63,7 +66,7 @@ export const asyncRoutes = [
                 path: '',
                 name: 'doing',
                 component: () => import('@/views/doing/index.vue'),
-                meta: { title: '当前任务', roles: ['user'], icon: 'IconDocument' }
+                meta: { title: '进行中', roles: ['user'], icon: 'Menu' }
             }
         ]
     },
@@ -76,7 +79,7 @@ export const asyncRoutes = [
                 path: '',
                 name: 'done',
                 component: () => import('@/views/done/index.vue'),
-                meta: { title: '已完成', roles: ['user'] }
+                meta: { title: '已完成', roles: ['user'], icon: 'CircleCheck' }
             }
         ]
     },

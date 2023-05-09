@@ -8,6 +8,13 @@ export function getPro(page) {
     })
 }
 
+//根据id查询项目创建者
+export function getCreator(id) {
+    return request({
+        url: `/projects/${id}`,
+        method: 'get'
+    })
+}
 
 //创建项目
 export function addPro(data) {

@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted, ref, watchEffect } from 'vue';
 import { getUserDone, changeStatus, removeUpById, updateUp } from '@/api/up';
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUser } from '@/utils/auth'
+import { getCreator } from '@/api/project';
 
 const userId = getUser().id
 const resData = ref([])
@@ -12,17 +13,36 @@ const backupData = ref([])
 
 //删除表格数据
 const handleDelete = (index, row) => {
-    removeUpById(row.id).then((res) => {
-        if (res.status == 200) {
-            ElMessage({
-                message: '删除已成功',
-                type: 'success',
-            })
-            getData()
+    getCreator(row.project_id).then((res => {
+        if (res.project.creator === userId) {
+            ElMessageBox.confirm(
+                '是否删除此项目',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            )
+                .then(() => {
+                    removeUpById(row.id).then((res) => {
+                        if (res.status == 200) {
+                            ElMessage({
+                                message: '删除已成功',
+                                type: 'success',
+                            })
+                            getData(currentPage.value)
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        } else {
+            ElMessage.error('不是此项目创建者，无权删除')
         }
-    }).catch(err => {
-        console.log(err);
-    })
+    }))
 }
 
 //计算表格数据
@@ -146,8 +166,7 @@ onMounted(() => {
                 start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
                 value-format="YYYY-MM-DD"></el-date-picker>
         </div>
-        <!-- <el-divider style="border-color:#c8c9cc" /> -->
-        <el-dialog title="编辑项目" v-model="showEditForm">
+        <el-dialog title="编辑项目" v-model="showEditForm" style="height: 300px;">
             <el-form :model="editForm">
                 <el-form-item label="数量">
                     <el-input v-model.num="editForm.num"></el-input>
@@ -158,7 +177,7 @@ onMounted(() => {
                 <el-form-item label="备注">
                     <el-input v-model.remark="editForm.remark"></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item style="float:right">
                     <el-button type="primary" @click="submitEdit">提交</el-button>
                     <el-button type="primary" @click="cancleEdit">取消</el-button>
                 </el-form-item>
@@ -178,7 +197,7 @@ onMounted(() => {
             <el-table-column prop="timestamp" label="创建时间" width="180">
 
             </el-table-column>
-            <el-table-column label="Operations" width="180">
+            <el-table-column label="编辑" width="180">
                 <template #default="scope">
                     <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>

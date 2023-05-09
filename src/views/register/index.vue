@@ -2,6 +2,7 @@
 import { reactive, ref } from 'vue'
 import { validate, register } from '@/api/login'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 const registerFormRef = ref()
 const router = useRouter()
@@ -62,9 +63,14 @@ const submitForm = (formEl) => {
                 name: registerForm.name,
                 password: registerForm.pass
             }
+            console.log(userData);
             register(userData).then(res => {
                 if (res.status == 200) {
                     router.push({ path: '/login' })
+                    ElMessage({
+                        message: '注册成功，请登录',
+                        type: 'success',
+                    })
                 }
             })
                 .catch(err => {

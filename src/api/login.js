@@ -12,7 +12,7 @@ export function login(data) {
 //验证用户名是否存在
 export function validate(data) {
     return request({
-        url: '/auth/login',
+        url: '/auth/register/name',
         method: 'post',
         data: data
     })

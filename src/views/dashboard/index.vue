@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 const time = ref('')
 const year = ref('')
 const month = ref('')
@@ -14,8 +14,8 @@ function updateTime() {
     day.value = now.getDate()
     week.value = weekdays[now.getDay()]
 }
+updateTime()
 
-setInterval(updateTime, 1000);
 </script>
 
 <template>

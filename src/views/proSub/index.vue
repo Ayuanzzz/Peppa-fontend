@@ -3,6 +3,7 @@ import { ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getProByid, addUp, removeUp } from '@/api/up'
 import { getAllEmp } from '@/api/employee';
+import { ElMessage } from 'element-plus'
 const proId = ref(0)
 proId.value = useRoute().params.id
 const tableData = ref([])
@@ -81,7 +82,7 @@ const handleDelete = (index, row) => {
                 message: '删除已成功',
                 type: 'success',
             })
-            getData()
+            getData(currentPage.value)
         }
     }).catch(err => {
         console.log(err);
@@ -93,19 +94,22 @@ const handleDelete = (index, row) => {
     <div class="container">
         <el-button type="primary" @click="showForm = true">添加人员</el-button>
         <el-divider style="border-color:#c8c9cc" />
-        <el-dialog title="添加人员" v-model="showForm">
+        <el-dialog title="添加人员" v-model="showForm" class="dialog">
+            <el-divider />
             <el-checkbox-group v-model="checkList" v-for="emp in empListFilter" :key="emp.id">
                 <el-checkbox :label=emp.id class="checkbox">{{ emp.name }}</el-checkbox>
             </el-checkbox-group>
-            <el-button type="primary" @click="submit">提交</el-button>
-            <el-button type="primary" @click="cancel">取消</el-button>
+            <div class="footer">
+                <el-button type="primary" @click="submit">提交</el-button>
+                <el-button type="primary" @click="cancel">取消</el-button>
+            </div>
         </el-dialog>
-        <el-table :data="tableData" style="width: 750px">
+        <el-table :data="tableData" style="width: 900px">
             <el-table-column prop="user_name" label="参与人员" width="180" />
             <el-table-column prop="num" label="图幅数量" width="170" />
             <el-table-column prop="status" label="完成情况" width="180">
                 <template #default="scope">
-                    <el-tag :type="scope.row.status ? 'success' : ''">{{ scope.row.status ? '已完成' : '进行中' }}</el-tag>
+                    <el-tag :type="scope.row.status ? '' : 'success'">{{ scope.row.status ? '进行中' : '已完成' }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="timestamp" label="创建时间" width="250" />
@@ -135,5 +139,15 @@ const handleDelete = (index, row) => {
 
 .checkbox {
     display: inline-block;
+}
+
+.footer {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.dialog {
+    position: relative;
 }
 </style>

@@ -1,23 +1,36 @@
 <script setup>
 import { onMounted, ref, watchEffect } from 'vue';
 import { getPro, addPro, deletePro } from '@/api/project';
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router';
 
 const tableData = ref([])
 
 const handleDelete = (index, row) => {
-    deletePro(row.id).then((res) => {
-        if (res.status == 200) {
-            ElMessage({
-                message: '删除已成功',
-                type: 'success',
-            })
-            getData(currentPage.value)
+    ElMessageBox.confirm(
+        '是否删除此项目',
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
         }
-    }).catch(err => {
-        console.log(err);
-    })
+    )
+        .then(() => {
+            deletePro(row.id).then((res) => {
+                if (res.status == 200) {
+                    ElMessage({
+                        message: '删除已成功',
+                        type: 'success',
+                    })
+                    getData(currentPage.value)
+                }
+            }).catch(err => {
+                console.log(err);
+            })
+        })
+        .catch(err => {
+            console.log(err);
+        })
 }
 
 const count = ref(0)
@@ -38,7 +51,10 @@ const form = ref({
 });
 
 const submitForm = () => {
-    addPro(form.value).then(res => {
+    let userId = JSON.parse(localStorage.getItem('userData')).id
+    let data = form.value
+    data.userId = userId
+    addPro(data).then(res => {
         if (res.status == 200) {
             getData(1)
             ElMessage({
@@ -56,7 +72,6 @@ const cancleForm = () => {
     showForm.value = false;
 }
 
-const showSub = ref(false)
 const proId = ref(0)
 const router = useRouter()
 const handleEdit = (index, row) => {
@@ -100,9 +115,15 @@ onMounted(() => {
             </el-form>
         </el-dialog>
         <el-divider style="border-color:#c8c9cc" />
-        <el-table :data="tableData" style="width: 500px">
-            <el-table-column prop="name" label="项目名称" width="180" />
-            <el-table-column prop="timestamp" label="创建时间" width="180" />
+        <el-table :data="tableData" style="width: 950px">
+            <el-table-column prop="name" label="项目名称" width="400" />
+            <el-table-column prop="progress" label="项目进度" width="220">
+                <template #default="scope">
+                    <el-progress :text-inside="true" :stroke-width="20" :percentage=scope.row.progress.percentage
+                        :status=scope.row.progress.status />
+                </template>
+            </el-table-column>
+            <el-table-column prop="timestamp" label="创建时间" width="150" />
             <el-table-column label="编辑">
                 <template #default="scope">
                     <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">查看</el-button>

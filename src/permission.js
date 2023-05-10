@@ -17,7 +17,7 @@ router.beforeEach((to, from, next) => {
                 accessRoutes.forEach(route => {
                     router.addRoute(route)
                 });
-                next({ path: '/' })
+                next({ ...to, replace: true })
             } else {
                 next()
             }

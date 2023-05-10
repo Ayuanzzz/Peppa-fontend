@@ -5,7 +5,7 @@ const year = ref('')
 const month = ref('')
 const day = ref('')
 const week = ref('')
-function updateTime() {
+function initTime() {
     const now = new Date();
     const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
     time.value = now.toLocaleTimeString();
@@ -13,8 +13,9 @@ function updateTime() {
     month.value = now.getMonth() + 1
     day.value = now.getDate()
     week.value = weekdays[now.getDay()]
+    setTimeout(initTime, 1000);
 }
-updateTime()
+initTime()
 
 </script>
 

@@ -44,7 +44,7 @@ const handleFilterChange = () => {
         filterDate.value = ["2000-01-01", "3000-01-01"]
     }
     resData.value = filterTime(filterDate.value, backupData.value)
-    computedTbale()
+    computedTbale(1)
 }
 
 //根据页码过滤数组
@@ -91,7 +91,7 @@ onMounted(() => {
             <el-table-column prop="num" label="图幅数量" width="170" />
             <el-table-column prop="status" label="完成情况" width="180">
                 <template #default="scope">
-                    <el-tag :type="scope.row.status ? 'success' : ''">{{ scope.row.status ? '已完成' : '进行中' }}</el-tag>
+                    <el-tag :type="scope.row.status ? '' : 'success'">{{ scope.row.status ? '进行中' : '已完成' }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="timestamp" label="创建时间" width="250" />

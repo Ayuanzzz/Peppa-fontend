@@ -1,16 +1,18 @@
 <template>
     <div class="app-main">
-        <router-view v-slot="{ Component, route }">
-            <component :is="Component" :key="route.path"></component>
-        </router-view>
+        <div>
+            <router-view v-slot="{ Component, route }">
+                <component :is="Component" :key="route.path"></component>
+            </router-view>
+        </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
 .app-main {
-    height: 100vh;
+    height: calc(100vh - 10px);
     display: flex;
-    align-items: center;
+    margin-top: 5%;
     justify-content: center;
     overflow: scroll;
 }

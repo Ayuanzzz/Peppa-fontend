@@ -30,7 +30,7 @@ const handleDelete = (index, row) => {
                                 message: '删除已成功',
                                 type: 'success',
                             })
-                            getData(currentPage.value)
+                            getData()
                         }
                     }).catch(err => {
                         console.log(err);
@@ -52,6 +52,7 @@ const computedTbale = (page) => {
 }
 const getData = () => {
     getUserDone(userId).then(res => {
+        console.log(res);
         backupData.value = res.data
         resData.value = res.data
         currentPage.value = 1
@@ -125,7 +126,7 @@ const handleFilterChange = () => {
         filterDate.value = ["2000-01-01", "3000-01-01"]
     }
     resData.value = filterTime(filterDate.value, backupData.value)
-    computedTbale()
+    computedTbale(1)
 }
 
 //根据页码过滤数组

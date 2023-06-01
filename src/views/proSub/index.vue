@@ -10,6 +10,7 @@ const tableData = ref([])
 const count = ref(0)
 const getData = (page) => {
     getProByid(proId.value, page).then(res => {
+        console.log(res)
         tableData.value = res.data
         getEmpData()
         count.value = parseInt(res.count)
@@ -104,16 +105,18 @@ const handleDelete = (index, row) => {
                 <el-button type="primary" @click="cancel">取消</el-button>
             </div>
         </el-dialog>
-        <el-table :data="tableData" style="width: 900px">
-            <el-table-column prop="user_name" label="参与人员" width="180" />
-            <el-table-column prop="num" label="图幅数量" width="170" />
+        <el-table :data="tableData" style="width: 1000px">
+            <el-table-column prop="user_name" label="参与人员" width="100" />
+            <el-table-column prop="num" label="图幅数量" width="90" />
+            <el-table-column prop="remark" label="备注" />
             <el-table-column prop="status" label="完成情况" width="180">
                 <template #default="scope">
                     <el-tag :type="scope.row.status ? '' : 'success'">{{ scope.row.status ? '进行中' : '已完成' }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="timestamp" label="创建时间" width="250" />
-            <el-table-column label="操作">
+            <el-table-column prop="timestamp" label="创建时间" width="120" />
+            <el-table-column prop="endtime" label="完成时间" width="120" />
+            <el-table-column label="操作" width="90">
                 <template #default="scope">
                     <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>

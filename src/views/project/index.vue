@@ -5,6 +5,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router';
 
 const tableData = ref([])
+const resData = ref([])
+
 
 const handleDelete = (index, row) => {
     ElMessageBox.confirm(
@@ -34,11 +36,13 @@ const handleDelete = (index, row) => {
 }
 
 const count = ref(0)
-const getData = (page) => {
-    getPro(page).then(res => {
+const getData = () => {
+    getPro().then(res => {
         console.log(res);
+        backupData.value = res.projects
+        resData.value = res.projects
         tableData.value = res.projects
-        count.value = parseInt(res.count)
+        computedTbale(currentPage.value)
     }).catch(err => {
         console.log(err);
     })
@@ -85,9 +89,52 @@ const handleCurrentChange = (val) => {
     currentPage.value = val
 }
 
+
+
+//时间选择
+const filterDate = ref('')
+const backupData = ref([])
+const handleFilterChange = () => {
+    if (filterDate.value === null) {
+        filterDate.value = ["2000-01-01", "3000-01-01"]
+    }
+    resData.value = filterTime(filterDate.value, backupData.value)
+    computedTbale(1)
+}
+
+//根据时间过滤数组
+function filterTime(arr1, arr2) {
+    const filteredArr = [];
+
+    for (let i = 0; i < arr2.length; i++) {
+        const startDate = new Date(arr1[0]).getTime(); // 将开始日期转换为时间戳
+        const endDate = new Date(arr1[1]).getTime(); // 将结束日期转换为时间戳
+        const objDate = new Date(arr2[i].timestamp).getTime(); // 将对象中的时间戳转换为时间戳
+
+        if (objDate >= startDate && objDate <= endDate) {
+            filteredArr.push(arr2[i]);
+        }
+    }
+    return filteredArr;
+}
+
+//根据页码过滤数组
+function filterPage(arr, i) {
+    let result = [];
+    let num = (i - 1) * 10
+    result = arr.slice(num, num + 10)
+    return result
+}
+
+//计算表格数据
+const computedTbale = (page) => {
+    count.value = resData.value.length
+    tableData.value = filterPage(resData.value, page)
+}
+
 //监听页数变化
 watchEffect(() => {
-    getData(currentPage.value)
+    computedTbale(currentPage.value)
 })
 
 onMounted(() => {
@@ -99,7 +146,17 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <el-button type="primary" @click="showForm = true">创建项目</el-button>
+        <div class="datepicker">
+            <div>
+                <span>按时间选择：</span>
+                <el-date-picker v-model="filterDate" type="daterange" range-separator="To" placeholder="选择日期"
+                    start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
+                    value-format="YYYY-MM-DD"></el-date-picker>
+            </div>
+            <div class="btn">
+                <el-button class="btn" type="primary" @click="showForm = true">创建项目</el-button>
+            </div>
+        </div>
         <el-dialog title="创建项目" v-model="showForm" style="height: 230px;">
             <el-form :model="form">
                 <el-form-item label="项目名称">
@@ -147,6 +204,23 @@ onMounted(() => {
 
 .pag {
     margin-top: 20px;
+}
+
+.datepicker {
+    align-self: flex-start;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    span {
+        color: #909399;
+        font-family: "Microsoft YaHei";
+        font-size: 14px;
+    }
+
+    .btn {
+        margin-right: 50px;
+    }
 }
 </style>
 

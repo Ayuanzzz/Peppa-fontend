@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //获取全部项目信息
 export function getPro(page) {
     return request({
-        url: `/projects/page/${page}`,
+        url: `/projects`,
         method: 'get'
     })
 }
@@ -18,8 +18,6 @@ export function getCreator(id) {
 
 //创建项目
 export function addPro(data) {
-    console.log('data--', data);
-    console.log(typeof (data.num));
     return request({
         url: '/projects/',
         method: 'post',

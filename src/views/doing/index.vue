@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watchEffect } from 'vue';
 import { getUserDoing, addUpByUser, changeStatus, removeUpById, updateUp } from '@/api/up';
+import { deletePro } from '@/api/project'
 import { getCreator } from '@/api/project';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUser } from '@/utils/auth'
@@ -27,7 +28,8 @@ const handleDelete = (index, row) => {
                 }
             )
                 .then(() => {
-                    removeUpById(row.id).then((res) => {
+                    console.log(row);
+                    deletePro(row.project_id).then((res) => {
                         if (res.status == 200) {
                             ElMessage({
                                 message: '删除已成功',
@@ -50,6 +52,7 @@ const handleDelete = (index, row) => {
 
 const getData = (page) => {
     getUserDoing(userId, page).then(res => {
+        console.log(res)
         tableData.value = res.data
         count.value = parseInt(res.count)
     }).catch(err => {
@@ -212,10 +215,12 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    height: calc(100vh - 10px);
 }
 
 .pag {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 </style>
 

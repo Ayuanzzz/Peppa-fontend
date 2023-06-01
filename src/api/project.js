@@ -16,6 +16,14 @@ export function getCreator(id) {
     })
 }
 
+//根据项目名搜索项目
+export function findByName(name) {
+    return request({
+        url: `/projects/name/${name}`,
+        method: 'get'
+    })
+}
+
 //创建项目
 export function addPro(data) {
     return request({

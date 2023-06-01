@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref, watchEffect } from 'vue';
-import { getPro, addPro, deletePro } from '@/api/project';
+import { onMounted, ref, watchEffect, watch } from 'vue';
+import { getPro, addPro, deletePro, findByName } from '@/api/project';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router';
 
@@ -132,10 +132,35 @@ const computedTbale = (page) => {
     tableData.value = filterPage(resData.value, page)
 }
 
+//项目搜索框
+const input = ref('')
+watch(input, (newVal) => {
+    setTimeout(() => {
+        console.log(newVal);
+        if (newVal) {
+            findByName(newVal).then(res => {
+                if (res.status == 200) {
+                    console.log(res);
+                    backupData.value = res.data
+                    resData.value = res.data
+                    tableData.value = res.data
+                    computedTbale(currentPage.value)
+                }
+            }).catch(err => {
+                console.log(err);
+            })
+        } else {
+            getData(currentPage.value)
+        }
+    }, 2000)
+})
+
 //监听页数变化
 watchEffect(() => {
     computedTbale(currentPage.value)
 })
+
+
 
 onMounted(() => {
     getData(currentPage.value)
@@ -146,12 +171,15 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <div class="datepicker">
+        <div class="picker">
             <div>
-                <span>按时间选择：</span>
+                <span>按时间搜索：</span>
                 <el-date-picker v-model="filterDate" type="daterange" range-separator="To" placeholder="选择日期"
                     start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
                     value-format="YYYY-MM-DD"></el-date-picker>
+            </div>
+            <div>
+                <el-input v-model="input" placeholder="按项目搜索" clearable />
             </div>
             <div class="btn">
                 <el-button class="btn" type="primary" @click="showForm = true">创建项目</el-button>
@@ -206,7 +234,7 @@ onMounted(() => {
     margin-top: 20px;
 }
 
-.datepicker {
+.picker {
     align-self: flex-start;
     width: 100%;
     display: flex;

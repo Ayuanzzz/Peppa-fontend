@@ -30,7 +30,6 @@ initTime()
 .container {
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, #E1F5FE, #B3E5FC);
     display: flex;
     justify-content: center;
     align-items: center;

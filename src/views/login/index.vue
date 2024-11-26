@@ -5,7 +5,6 @@ import { ElMessage } from 'element-plus';
 import { login } from '@/api/login'
 import { asyncRoutes } from '@/router';
 import { filterAsyncRoutes } from '@/utils/router';
-import { userDataStore } from '@/stores/user';
 
 
 const router = useRouter()
@@ -25,7 +24,6 @@ const saveUserData = (data) => {
 }
 
 
-const userInfo = userDataStore()
 const validateLogin = (name, password) => {
     let data = {
         name: name,

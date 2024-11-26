@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref, watchEffect } from 'vue';
-import { getUserDone, changeStatus, removeUpById, updateUp } from '@/api/up';
+import { onMounted, ref, watchEffect,watch } from 'vue';
+import { getUserDone, changeStatus, removeUpById, updateUp,getUserDoneByName } from '@/api/up';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUser } from '@/utils/auth'
 import { getCreator } from '@/api/project';
@@ -153,6 +153,29 @@ function filterTime(arr1, arr2) {
     return filteredArr;
 }
 
+//项目搜索框
+const input = ref('')
+watch(input, (newVal) => {
+    setTimeout(() => {
+        console.log(newVal);
+        if (newVal) {
+            getUserDoneByName(userId,newVal).then(res => {
+                if (res.status == 200) {
+                    console.log(res);
+                    backupData.value = res.data
+                    resData.value = res.data
+                    tableData.value = res.data
+                    computedTbale(currentPage.value)
+                }
+            }).catch(err => {
+                console.log(err);
+            })
+        } else {
+            getData()
+        }
+    }, 2000)
+})
+
 onMounted(() => {
     getData()
 })
@@ -161,12 +184,18 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <div class="datepicker">
-            <span>按时间选择：</span>
+        <div class="picker">
+            <div>
+                <span>按时间选择：</span>
             <el-date-picker v-model="filterDate" type="daterange" range-separator="To" placeholder="选择日期"
                 start-placeholder="开始日期" end-placeholder="结束日期" @change="handleFilterChange"
                 value-format="YYYY-MM-DD"></el-date-picker>
+            </div>
+            <div>
+                <el-input v-model="input" placeholder="按项目搜索" clearable />
+            </div>
         </div>
+        <el-divider style="border-color:#c8c9cc" />
         <el-dialog title="编辑项目" v-model="showEditForm" style="height: 300px;">
             <el-form :model="editForm">
                 <el-form-item label="数量">
@@ -223,11 +252,11 @@ onMounted(() => {
     margin-top: 20px;
 }
 
-.datepicker {
-    padding-left: 10px;
+.picker {
     align-self: flex-start;
+    width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: space-around;
 
     span {
         color: #909399;

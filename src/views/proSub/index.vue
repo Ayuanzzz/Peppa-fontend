@@ -2,8 +2,11 @@
 import { ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getProByid, addUp, removeUp } from '@/api/up'
-import { getAllEmp } from '@/api/employee';
+import { getAllEmp } from '@/api/employee'
 import { ElMessage } from 'element-plus'
+import{itemStore} from '@/stores/item'
+
+const store= itemStore()
 const proId = ref(0)
 proId.value = useRoute().params.id
 const tableData = ref([])
@@ -93,7 +96,10 @@ const handleDelete = (index, row) => {
 
 <template>
     <div class="container">
+        <div class="header">
+        <h2>{{store.name}}</h2>
         <el-button type="primary" @click="showForm = true">添加人员</el-button>
+        </div>
         <el-divider style="border-color:#c8c9cc" />
         <el-dialog title="添加人员" v-model="showForm" class="dialog">
             <el-divider />
@@ -136,6 +142,10 @@ const handleDelete = (index, row) => {
     align-items: center;
 }
 
+h2{
+    color: #909399;
+}
+
 .pag {
     margin-top: 20px;
 }
@@ -152,5 +162,11 @@ const handleDelete = (index, row) => {
 
 .dialog {
     position: relative;
+}
+
+.header{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
 }
 </style>

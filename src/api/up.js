@@ -32,6 +32,14 @@ export function getUserDone(id) {
     })
 }
 
+//通过员工id和项目名获取已完成项目
+export function getUserDoneByName(id, name) {
+    return request({
+        url: `/up/userDone/${id}/name/${name}`,
+        method: 'get'
+    })
+}
+
 //管理员添加
 export function addUp(data) {
     return request({

@@ -1,12 +1,6 @@
 <script setup>
 import { onMounted, ref, watchEffect, watch } from "vue";
-import {
-  getPro,
-  addPro,
-  deletePro,
-  findByName,
-  hiddenPro,
-} from "@/api/project";
+import { getHiddenPro, deletePro, findByName, showPro } from "@/api/project";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import { itemStore } from "@/stores/item";
@@ -43,12 +37,12 @@ const handleDelete = (index, row) => {
 };
 
 //隐藏项目
-const handleHidden = (index, row) => {
-  hiddenPro(row.id)
+const handleShow = (index, row) => {
+  showPro(row.id)
     .then((res) => {
       if (res.status == 200) {
         ElMessage({
-          message: "项目已隐藏",
+          message: "项目已显示",
           type: "success",
         });
         getData(currentPage.value);
@@ -61,7 +55,7 @@ const handleHidden = (index, row) => {
 
 const count = ref(0);
 const getData = () => {
-  getPro()
+  getHiddenPro()
     .then((res) => {
       console.log("data------", res);
       backupData.value = res.projects;
@@ -72,36 +66,6 @@ const getData = () => {
     .catch((err) => {
       console.log(err);
     });
-};
-
-const showForm = ref(false);
-const form = ref({
-  name: "",
-  num: 0,
-});
-
-const submitForm = () => {
-  let userId = JSON.parse(localStorage.getItem("userData")).id;
-  let data = form.value;
-  data.userId = userId;
-  addPro(data)
-    .then((res) => {
-      if (res.status == 200) {
-        getData(1);
-        ElMessage({
-          message: "创建项目成功",
-          type: "success",
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  showForm.value = false;
-};
-
-const cancleForm = () => {
-  showForm.value = false;
 };
 
 const proId = ref(0);
@@ -212,26 +176,7 @@ onMounted(() => {
       <div>
         <el-input v-model="input" placeholder="按项目搜索" clearable />
       </div>
-      <div class="btn">
-        <el-button class="btn" type="primary" @click="showForm = true"
-          >创建项目</el-button
-        >
-      </div>
     </div>
-    <el-dialog title="创建项目" v-model="showForm" style="height: 230px">
-      <el-form :model="form">
-        <el-form-item label="项目名称">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="项目数量">
-          <el-input v-model.number="form.num"></el-input>
-        </el-form-item>
-        <el-form-item style="float: right">
-          <el-button type="primary" @click="submitForm">提交</el-button>
-          <el-button type="primary" @click="cancleForm">取消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
     <el-divider style="border-color: #c8c9cc" />
     <el-table :data="tableData" style="width: 950px">
       <el-table-column prop="name" label="项目名称" width="300" />
@@ -256,9 +201,9 @@ onMounted(() => {
           >
           <el-button
             size="small"
-            type="info"
-            @click="handleHidden(scope.$index, scope.row)"
-            >隐藏</el-button
+            type="success"
+            @click="handleShow(scope.$index, scope.row)"
+            >显示</el-button
           >
           <el-button
             size="small"

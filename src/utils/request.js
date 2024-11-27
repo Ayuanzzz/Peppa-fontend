@@ -2,8 +2,7 @@ import axios from "axios";
 
 // 创建 Axios 实例
 const http = axios.create({
-  baseURL: "http://127.0.0.1:5000",
-  // baseURL: "http://172.16.0.55:5000",
+  baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 5000, // 超时时间
   headers: {
     "Content-Type": "application/json", // 请求头部信息
